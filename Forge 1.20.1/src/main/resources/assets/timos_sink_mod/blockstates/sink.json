@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "timos_sink_mod:block/sink"
+    }
+  }
+}

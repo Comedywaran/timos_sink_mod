@@ -1,6 +1,5 @@
 package de.timo_heise.timos_sink_mod.block_entities;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,9 +18,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +28,7 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
     private int productionPerTick = 0;
     private int fluidBufferSize = 0;
     private final SinkFluidTank tank = new SinkFluidTank(this);
+    private boolean doPush = true;
 
 
     public SinkBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -40,12 +38,35 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
     public static void tick(Level level, BlockPos pos, BlockState state, SinkBlockEntity be) {
         if (level.isClientSide) return;
         be.tank.addFluid(be.productionPerTick);
+        if(be.getDoPush()) {
+            for (Direction direction : Direction.values()) {
+                BlockEntity neighbor = level.getBlockEntity(pos.relative(direction));
+
+                if (neighbor == null) {
+                    continue;
+                }
+
+                neighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, direction.getOpposite()).ifPresent(handler -> {
+                            FluidStack simulated = be.tank.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
+                            if (simulated.isEmpty()) { return; }
+
+                            int accepted = handler.fill(simulated, IFluidHandler.FluidAction.SIMULATE);
+                            if (accepted <= 0) { return; }
+
+                            FluidStack drained = be.tank.drain(accepted, IFluidHandler.FluidAction.EXECUTE);
+                            handler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+
+                            be.setChanged();
+                        });
+            }
+        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putString("Fluid", String.valueOf(ForgeRegistries.FLUIDS.getKey(fluid)));
+        tag.putBoolean("Push", doPush);
         tag.putInt("ProductionPerTick", productionPerTick);
         tag.putInt("FluidBufferSize", fluidBufferSize);
         tank.writeToNBT(tag);
@@ -58,6 +79,7 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
         ResourceLocation rl = ResourceLocation.tryParse(tag.getString("Fluid"));
         fluid = (rl != null) ? ForgeRegistries.FLUIDS.getValue(rl) : Fluids.EMPTY;
 
+        doPush = tag.getBoolean("Push");
         productionPerTick = tag.getInt("ProductionPerTick");
         fluidBufferSize = tag.getInt("FluidBufferSize");
         tank.readFromNBT(tag);
@@ -100,5 +122,9 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
 
     public int getFluidBufferSize() {
         return fluidBufferSize;
+    }
+
+    public boolean getDoPush() {
+        return doPush;
     }
 }

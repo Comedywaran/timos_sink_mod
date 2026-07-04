@@ -1,7 +1,4 @@
 A file for my personal notes
 
-TODO: add Config
-some progress on menu in git stash
-
 IntelliJ IDEA:
 ctrl + H -> all implementations of whatever

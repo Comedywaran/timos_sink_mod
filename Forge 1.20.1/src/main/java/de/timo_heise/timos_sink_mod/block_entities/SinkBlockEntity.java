@@ -1,13 +1,19 @@
 package de.timo_heise.timos_sink_mod.block_entities;
 
+import de.timo_heise.timos_sink_mod.menus.SinkMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -22,14 +28,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider {
+public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider, MenuProvider {
 
     private Fluid fluid = Fluids.EMPTY;
     private int productionPerTick = 0;
     private int fluidBufferSize = 0;
     private final SinkFluidTank tank = new SinkFluidTank(this);
     private boolean doPush = true;
-
 
     public SinkBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SINK_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -97,6 +102,15 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
         return saveWithoutMetadata();
     }
 
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("block.timos_sink_mod.sink");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inv, Player player) {
+        return new SinkMenu(containerId, inv, this);
+    }
 
     private final LazyOptional<IFluidHandler> fluidCapability = LazyOptional.of(() -> tank);
 
@@ -113,7 +127,6 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider 
         super.invalidateCaps();
         fluidCapability.invalidate();
     }
-
 
 
     public Fluid getFluid() {

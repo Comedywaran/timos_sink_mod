@@ -5,7 +5,9 @@ import de.timo_heise.timos_sink_mod.block_entities.ModBlockEntities;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
 import de.timo_heise.timos_sink_mod.items.ModCreativeTabs;
 import de.timo_heise.timos_sink_mod.items.ModItems;
-import net.minecraft.client.Minecraft;
+import de.timo_heise.timos_sink_mod.menus.ModMenuTypes;
+import de.timo_heise.timos_sink_mod.menus.SinkScreen;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -33,6 +35,7 @@ public class TimosSinkMod
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -40,11 +43,7 @@ public class TimosSinkMod
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
+    public void onServerStarting(ServerStartingEvent event) {}
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -53,9 +52,7 @@ public class TimosSinkMod
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            MenuScreens.register(ModMenuTypes.SINK_MENU.get(), SinkScreen::new);
         }
     }
 }

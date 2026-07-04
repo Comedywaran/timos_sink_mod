@@ -16,7 +16,7 @@ public class ModCreativeTabs {
     public static final RegistryObject<CreativeModeTab> SINK_TAB = CREATIVE_MODE_TABS.register("timos_sink_tab", () -> CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon(() -> ModBlocks.SINK_BLOCK.get().asItem().getDefaultInstance())
-            .title(Component.translatable("itemGroup.timos_sink_tab"))
+            .title(Component.translatable("itemGroup.timos_sink_mod.timos_sink_tab"))
             .displayItems((parameters, output) -> {
                 output.accept(ModBlocks.SINK_BLOCK.get());
             }).build());

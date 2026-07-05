@@ -1,6 +1,7 @@
 package de.timo_heise.timos_sink_mod.menus;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,8 +44,22 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         for(SinkTab tab : tabs) {
-            checkMouseHovering(guiGraphics, tab, mouseX, mouseY);
+            if(isHovering(tab.coords[0], tab.coords[1], tab.coords[2], tab.coords[3]-4, mouseX+leftPos, mouseY+topPos)) {
+                guiGraphics.renderTooltip(font, tab.title, (int) mouseX, (int) mouseY);
+            }
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
+        for (SinkTab tab : tabs) {
+            if (tab == tabs.get(selectedTabIndex)) {continue;}
+            if(isHovering(tab.coords[0], tab.coords[1], tab.coords[2], tab.coords[3]-4, mouseX+leftPos, mouseY+topPos)) {
+                LogUtils.getLogger().info("switch to tab {}", tab.title.getString());
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, pButton);
     }
 
     @Override
@@ -93,11 +108,5 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
             guiGraphics.renderItemDecorations(this.font, itemstack, coords[0]+5, coords[1]+9);
         }
         guiGraphics.pose().popPose();
-    }
-
-    private void checkMouseHovering(GuiGraphics guiGraphics, SinkTab tab, double mouseX, double mouseY) {
-        if(isHovering(tab.coords[0], tab.coords[1], tab.coords[2], tab.coords[3], mouseX+leftPos, mouseY+topPos)) {
-            guiGraphics.renderTooltip(font, tab.title, (int) mouseX, (int) mouseY);
-        }
     }
 }

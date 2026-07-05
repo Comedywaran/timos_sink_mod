@@ -1,5 +1,8 @@
 {
   "block.timos_sink_mod.sink": "Sink",
 
+  "gui.timos_sink_mod.config": "Settings",
+  "gui.timos_sink_mod.admin_config": "Admin Settings",
+
   "itemGroup.timos_sink_mod.timos_sink_tab": "Timos Sink Mod"
 }

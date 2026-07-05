@@ -19,7 +19,7 @@ import java.util.List;
 public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/sink.png");
 
-    private record SinkTab (ItemLike icon, Component title, Object idk) {}
+    private record SinkTab (ItemLike icon, Component title, int[] coords, Object idk) {}
     private final List<SinkTab> tabs;
     private int selectedTabIndex = 0;
     private final boolean isCreative;
@@ -28,13 +28,22 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
         super(menu, inv, title);
         isCreative = inv.player.isCreative();
         if (isCreative) {
-            tabs = List.of(new SinkTab(ModBlocks.SINK_BLOCK.get(), Component.translatable("block.timos_sink_mod.sink"), null),
-                    new SinkTab(Items.CRAFTING_TABLE, Component.translatable("gui.timos_sink_mod.config"), null),
-                    new SinkTab(Items.COMMAND_BLOCK, Component.translatable("gui.timos_sink_mod.admin_config"), null) );
+            tabs = List.of(new SinkTab(ModBlocks.SINK_BLOCK.get(), Component.translatable("block.timos_sink_mod.sink"), new int[4], null),
+                    new SinkTab(Items.CRAFTING_TABLE, Component.translatable("gui.timos_sink_mod.config"), new int[4], null),
+                    new SinkTab(Items.COMMAND_BLOCK, Component.translatable("gui.timos_sink_mod.admin_config"), new int[4], null) );
         }
         else {
-            tabs = List.of(new SinkTab(ModBlocks.SINK_BLOCK.get(), Component.translatable("block.timos_sink_mod.sink"), null),
-                    new SinkTab(Items.CRAFTING_TABLE, Component.translatable("gui.timos_sink_mod.config"), null) );
+            tabs = List.of(new SinkTab(ModBlocks.SINK_BLOCK.get(), Component.translatable("block.timos_sink_mod.sink"), new int[4], null),
+                    new SinkTab(Items.CRAFTING_TABLE, Component.translatable("gui.timos_sink_mod.config"), new int[4], null) );
+        }
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        for(SinkTab tab : tabs) {
+            checkMouseHovering(guiGraphics, tab, mouseX, mouseY);
         }
     }
 
@@ -46,12 +55,12 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
 
         for(int i = 0; i<tabs.size(); i++) {
             if(i != selectedTabIndex)
-            { renderTabButton(guiGraphics, false, tabs.size()-i-1, tabs.get(i).icon); }
+            { renderTabButton(guiGraphics, false, tabs.size()-i-1, tabs.get(i).icon, tabs.get(i).coords); }
         }
 
         guiGraphics.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-        renderTabButton(guiGraphics, true, tabs.size()-selectedTabIndex-1, tabs.get(selectedTabIndex).icon);
+        renderTabButton(guiGraphics, true, tabs.size()-selectedTabIndex-1, tabs.get(selectedTabIndex).icon, tabs.get(selectedTabIndex).coords);
     }
 
     @Override
@@ -63,37 +72,32 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
         addRenderableWidget(btn);
     }
 
-    private void renderTabButton(GuiGraphics guiGraphics, boolean isSelected, int index, ItemLike icon) {
+    private void renderTabButton(GuiGraphics guiGraphics, boolean isSelected, int index, ItemLike icon, int[] coords) {
         index = 6 - index;
-        final int tabWidth = 26;
-        final int tabHeight = 32;
-        final boolean isTopTab = true; // kinda useless since all are at the top
-        int resourceX = index * tabWidth; // position of texture in the resource
+        coords[2] = 26; // cords: {x,y,width,height}
+        coords[3] = 32;
+        coords[0] = leftPos + imageWidth - (coords[2]+1) * (7 - index) + 1;
+        coords[1] = topPos - coords[3] + 4;
+        int resourceX = index * 26; // position of texture in the resource
         int resourceY = 0;
-        int x = this.leftPos + this.imageWidth - 27 * (7 - index) + 1; // position of the tab button
-        int y = this.topPos;
-        if (isSelected) {
-            resourceY += tabHeight;
-        }
 
-        if (isTopTab) {
-            y -= 28;
-        } else {
-            resourceY += 2*tabHeight;
-            y += this.imageHeight - 4;
-        }
+        if (isSelected) { resourceY += 32; }
 
         com.mojang.blaze3d.systems.RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-        guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/tabs.png"), x, y, resourceX, resourceY, tabWidth, tabHeight);
+        guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/tabs.png"), coords[0], coords[1], resourceX, resourceY, coords[2], coords[3]);
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
-        x += 5;
-        y += 8 + (isTopTab ? 1 : -1);
         if (icon != null) {
             ItemStack itemstack = new ItemStack(icon, 1);
-            guiGraphics.renderItem(itemstack, x, y);
-            guiGraphics.renderItemDecorations(this.font, itemstack, x, y);
+            guiGraphics.renderItem(itemstack, coords[0]+5, coords[1]+9);
+            guiGraphics.renderItemDecorations(this.font, itemstack, coords[0]+5, coords[1]+9);
         }
         guiGraphics.pose().popPose();
+    }
+
+    private void checkMouseHovering(GuiGraphics guiGraphics, SinkTab tab, double mouseX, double mouseY) {
+        if(isHovering(tab.coords[0], tab.coords[1], tab.coords[2], tab.coords[3], mouseX+leftPos, mouseY+topPos)) {
+            guiGraphics.renderTooltip(font, tab.title, (int) mouseX, (int) mouseY);
+        }
     }
 }

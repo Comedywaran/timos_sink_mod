@@ -4,16 +4,21 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
+import de.timo_heise.timos_sink_mod.networking.ModPacketHandler;
+import de.timo_heise.timos_sink_mod.networking.packets.SinkConfigMenuChanged;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
@@ -58,7 +63,14 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
         super.init();
 
         Button btn = Button.builder(Component.literal("Config"), b -> {
+            ModPacketHandler.INSTANCE.sendToServer(new SinkConfigMenuChanged(menu.sinkBlockEntity.getBlockPos(), test()));
         }).bounds(leftPos + 20, topPos + 20, 120, 20).build();
         addRenderableWidget(btn);
+    }
+
+    public static CompoundTag test() { // placeholder
+        CompoundTag tag = new CompoundTag();
+        tag.putString("Fluid", String.valueOf(ForgeRegistries.FLUIDS.getKey(Fluids.WATER)));
+        return tag;
     }
 }

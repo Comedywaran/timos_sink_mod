@@ -28,6 +28,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider, MenuProvider {
 
     private Fluid fluid = Fluids.EMPTY;
@@ -35,6 +37,9 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider,
     private int fluidBufferSize = 0;
     private final SinkFluidTank tank = new SinkFluidTank(this);
     private boolean doPush = true;
+
+    public static final Set<String> changeableSurvival = Set.of();
+    public static final Set<String> changeableCreative = Set.of("Fluid");
 
     public SinkBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.SINK_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -120,6 +125,20 @@ public class SinkBlockEntity extends BlockEntity implements ICapabilityProvider,
             return fluidCapability.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    public void tryChangeNbt(CompoundTag tag, boolean isCreative) {
+        for(String key : tag.getAllKeys()) {
+            if(changeableSurvival.contains(key) || (isCreative && changeableCreative.contains(key))) {
+                switch(key) {
+                    case "Fluid":
+                        ResourceLocation rl = ResourceLocation.tryParse(tag.getString("Fluid"));
+                        fluid = (rl != null) ? ForgeRegistries.FLUIDS.getValue(rl) : fluid;
+                        setChanged();
+                        break;
+                }
+            }
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import de.timo_heise.timos_sink_mod.items.ModCreativeTabs;
 import de.timo_heise.timos_sink_mod.items.ModItems;
 import de.timo_heise.timos_sink_mod.menus.ModMenuTypes;
 import de.timo_heise.timos_sink_mod.menus.SinkScreen;
+import de.timo_heise.timos_sink_mod.networking.ModPacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,6 +37,7 @@ public class TimosSinkMod
         ModBlockEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModPacketHandler.register();
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

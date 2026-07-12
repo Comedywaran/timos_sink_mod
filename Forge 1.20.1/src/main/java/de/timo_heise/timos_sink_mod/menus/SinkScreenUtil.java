@@ -1,11 +1,11 @@
 package de.timo_heise.timos_sink_mod.menus;
 
-import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +31,7 @@ public final class SinkScreenUtil {
 
         if (isSelected) { resourceY += 32; }
 
-        com.mojang.blaze3d.systems.RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border. (idk man, I just copied this from vanilla)
         guiGraphics.pose().pushPose();
         if (isSelected) {guiGraphics.pose().translate(0.0F, 0.0F, 1.0F);}
         guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/tabs.png"), coords[0], coords[1], resourceX, resourceY, coords[2], coords[3]);
@@ -54,17 +54,30 @@ public final class SinkScreenUtil {
         }
     }
 
-    public static boolean checkButtonPressed(int[][] tabCoords, SinkTabs selectedTab, double mouseX, double mouseY) {
+    public static boolean checkButtonPressed(int[][] tabCoords, SinkTabs selectedTab, double mouseX, double mouseY, Minecraft minecraft, SinkScreen oldSinkScreen, BlockPos blockPos, boolean isCreative) {
         for (SinkTabs tab : SinkTabs.values()) {
             int[] c = tabCoords[tab.ordinal()];
             if (tab == selectedTab || c == null) {continue;}
             if(isHovering(c[0], c[1], c[2], c[3]-4, mouseX, mouseY)) {
-                LogUtils.getLogger().info("switch to tab {}", tab.toString());
-                //minecraft.setScreen(new SinkSurivivalConfigScreen(components[tab.ordinal()]));
+                switchScreen(tab, minecraft, oldSinkScreen, blockPos, isCreative);
                 return true;
             }
         }
         return false;
+    }
+
+    public static void switchScreen(SinkTabs tab, Minecraft minecraft, SinkScreen oldSinkScreen, BlockPos blockPos, boolean isCreative) {
+        switch(tab) {
+            case SINK:
+                minecraft.setScreen(oldSinkScreen); // just reopen the old screen since this one also has a menu, which is easier just to keep instead of recreate
+                break;
+            case SURVIVAL_CONFIG:
+                minecraft.setScreen(new SinkSurvivalConfigScreen(components[tab.ordinal()], oldSinkScreen, blockPos, isCreative));
+                break;
+            case CREATIVE_CONFIG:
+                minecraft.setScreen(new SinkCreativeConfigScreen(components[tab.ordinal()], oldSinkScreen, blockPos, isCreative));
+                break;
+        }
     }
 
     private static boolean isHovering(int pX, int pY, int pWidth, int pHeight, double pMouseX, double pMouseY) {

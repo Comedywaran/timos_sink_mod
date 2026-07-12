@@ -58,7 +58,8 @@ public class SinkFluidTank extends FluidTank {
         FluidStack fs = fluid.copy();
         if(fs.isEmpty())
             {fs = new FluidStack(sinkBlockEntity.getFluid(), 0);}
-        fs.grow(additionalFluidAmount);
+        if(!fs.isEmpty())
+            {fs.grow(additionalFluidAmount);}
         return fs;
     }
 

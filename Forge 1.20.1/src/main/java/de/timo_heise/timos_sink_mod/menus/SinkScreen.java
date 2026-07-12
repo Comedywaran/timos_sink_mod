@@ -1,9 +1,7 @@
 package de.timo_heise.timos_sink_mod.menus;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
-import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
 import de.timo_heise.timos_sink_mod.networking.ModPacketHandler;
 import de.timo_heise.timos_sink_mod.networking.packets.SinkConfigMenuChanged;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,13 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.List;
 
 public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/sink.png");
@@ -42,7 +35,7 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
-        if (SinkScreenUtil.checkButtonPressed(tabCoords, SinkScreenUtil.SinkTabs.SINK, mouseX, mouseY)) {return true;}
+        if (SinkScreenUtil.checkButtonPressed(tabCoords, SinkScreenUtil.SinkTabs.SINK, mouseX, mouseY, minecraft, this, menu.sinkBlockEntity.getBlockPos(), isCreative)) {return true;}
         return super.mouseClicked(mouseX, mouseY, pButton);
     }
 
@@ -63,7 +56,7 @@ public class SinkScreen extends AbstractContainerScreen<SinkMenu> {
         super.init();
 
         Button btn = Button.builder(Component.literal("Config"), b -> {
-            ModPacketHandler.INSTANCE.sendToServer(new SinkConfigMenuChanged(menu.sinkBlockEntity.getBlockPos(), test()));
+            ModPacketHandler.INSTANCE.sendToServer(new SinkConfigMenuChanged(menu.sinkBlockEntity.getBlockPos(), test())); //TODO: remove
         }).bounds(leftPos + 20, topPos + 20, 120, 20).build();
         addRenderableWidget(btn);
     }

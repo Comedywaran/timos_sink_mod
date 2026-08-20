@@ -1,4 +1,4 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.widgets;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
@@ -8,13 +8,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class SinkEditBox extends EditBox {
+public class CustomEditBox extends EditBox {
     private Consumer<String> onLooseFocus;
     private String oldValue;
     private Predicate<String> validator = Objects::nonNull;
     private Consumer<String> responder;
 
-    public SinkEditBox(Font font, int x, int y, int width, int height, Component message, String initialValue) {
+    public CustomEditBox(Font font, int x, int y, int width, int height, Component message, String initialValue) {
         super(font, x, y, width, height, message);
         super.setResponder(this::onValueChange);
         //EditBox editBox = new EditBox(this.font, leftPos + 10, this.y, imageWidth-20, 12, this.message);

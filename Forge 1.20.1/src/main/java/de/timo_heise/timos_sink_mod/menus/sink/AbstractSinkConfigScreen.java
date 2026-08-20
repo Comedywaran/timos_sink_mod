@@ -1,17 +1,15 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
+import de.timo_heise.timos_sink_mod.menus.widgets.CustomEditBox;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.function.Consumer;
 
 public abstract class AbstractSinkConfigScreen extends Screen {
     protected int leftPos;
@@ -40,7 +38,7 @@ public abstract class AbstractSinkConfigScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int pButton) {
-        if(getFocused() instanceof SinkEditBox && !getFocused().isMouseOver(mouseX, mouseY)) {
+        if(getFocused() instanceof CustomEditBox && !getFocused().isMouseOver(mouseX, mouseY)) {
             getFocused().setFocused(false);
         }
         if (SinkScreenUtil.checkButtonPressed(tabCoords, getTabType(), mouseX, mouseY, minecraft, oldSinkScreen, blockPos, isCreative)) {return true;}
@@ -50,7 +48,7 @@ public abstract class AbstractSinkConfigScreen extends Screen {
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
         if (pKeyCode == GLFW.GLFW_KEY_ENTER) {
-            if(getFocused() instanceof SinkEditBox) {
+            if(getFocused() instanceof CustomEditBox) {
                 getFocused().setFocused(false);
                 return true;
             }

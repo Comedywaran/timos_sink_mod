@@ -1,4 +1,4 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;

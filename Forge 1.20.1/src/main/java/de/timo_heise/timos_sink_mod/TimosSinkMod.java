@@ -6,7 +6,7 @@ import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
 import de.timo_heise.timos_sink_mod.items.ModCreativeTabs;
 import de.timo_heise.timos_sink_mod.items.ModItems;
 import de.timo_heise.timos_sink_mod.menus.ModMenuTypes;
-import de.timo_heise.timos_sink_mod.menus.SinkScreen;
+import de.timo_heise.timos_sink_mod.menus.sink.SinkScreen;
 import de.timo_heise.timos_sink_mod.networking.ModPacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;

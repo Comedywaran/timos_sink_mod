@@ -1,6 +1,6 @@
 package de.timo_heise.timos_sink_mod.block_entities;
 
-import de.timo_heise.timos_sink_mod.menus.SinkMenu;
+import de.timo_heise.timos_sink_mod.menus.sink.SinkMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

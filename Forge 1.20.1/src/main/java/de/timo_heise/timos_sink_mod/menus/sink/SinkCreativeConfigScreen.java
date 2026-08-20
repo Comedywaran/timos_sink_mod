@@ -1,7 +1,8 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
+import de.timo_heise.timos_sink_mod.menus.widgets.CustomEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -54,7 +55,7 @@ public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
     }
 
     private void subInit() {
-        SinkEditBox tempBox = new SinkEditBox(this.font, leftPos + 33, topPos + 10, imageWidth - 43 , 12, Component.translatable("container.repair"), "");
+        CustomEditBox tempBox = new CustomEditBox(this.font, leftPos + 33, topPos + 10, imageWidth - 43 , 12, Component.translatable("container.repair"), "");
         tempBox.setOnLooseFocus(this::onNameChanged);
         tempBox.setValidator(SinkCreativeConfigScreen::isValidFluid);
         this.addRenderableWidget(tempBox);

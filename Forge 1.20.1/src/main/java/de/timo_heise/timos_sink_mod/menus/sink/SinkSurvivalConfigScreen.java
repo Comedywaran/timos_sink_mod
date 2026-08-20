@@ -1,4 +1,4 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

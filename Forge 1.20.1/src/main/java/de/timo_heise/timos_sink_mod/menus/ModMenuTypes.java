@@ -1,6 +1,7 @@
 package de.timo_heise.timos_sink_mod.menus;
 
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
+import de.timo_heise.timos_sink_mod.menus.sink.SinkMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;

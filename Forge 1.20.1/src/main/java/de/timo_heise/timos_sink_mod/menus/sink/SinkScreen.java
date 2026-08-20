@@ -1,4 +1,4 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;

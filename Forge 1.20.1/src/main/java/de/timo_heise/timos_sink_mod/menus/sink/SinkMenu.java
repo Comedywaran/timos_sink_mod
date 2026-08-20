@@ -1,7 +1,8 @@
-package de.timo_heise.timos_sink_mod.menus;
+package de.timo_heise.timos_sink_mod.menus.sink;
 
 import de.timo_heise.timos_sink_mod.block_entities.SinkBlockEntity;
 import de.timo_heise.timos_sink_mod.blocks.ModBlocks;
+import de.timo_heise.timos_sink_mod.menus.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

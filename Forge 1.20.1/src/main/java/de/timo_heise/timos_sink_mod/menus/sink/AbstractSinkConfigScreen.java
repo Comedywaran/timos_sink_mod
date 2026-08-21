@@ -74,4 +74,23 @@ public abstract class AbstractSinkConfigScreen extends Screen {
     }
 
     protected abstract SinkScreenUtil.SinkTabs getTabType();
+
+    public int getLeftPos() {
+        return leftPos;
+    }
+    public int getTopPos() {
+        return topPos;
+    }
+    public int getImageWidth() {
+        return imageWidth;
+    }
+    public int getImageHeight() {
+        return imageHeight;
+    }
+    public int getWidth() {
+        return width;
+    }
+    public int getHeight() {
+        return height;
+    }
 }

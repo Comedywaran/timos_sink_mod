@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class SinkMenu extends AbstractContainerMenu {
     public final SinkBlockEntity sinkBlockEntity;
 
-    public SinkMenu(int id, Inventory inv, FriendlyByteBuf buf) { // Idk what this is for
+    public SinkMenu(int id, Inventory inv, FriendlyByteBuf buf) {
         this(id, inv, (SinkBlockEntity) inv.player.level().getBlockEntity(buf.readBlockPos()));
     }
 

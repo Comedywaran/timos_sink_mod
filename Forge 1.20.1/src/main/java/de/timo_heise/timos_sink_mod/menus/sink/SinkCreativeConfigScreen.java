@@ -7,9 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -22,13 +22,14 @@ import java.util.Set;
 public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
 
     Set<EditBox> editBoxes = new HashSet<>();
-    protected SinkCreativeConfigScreen(Component pTitle, SinkScreen oldSinkScreen, BlockPos blockPos, boolean isCreative) {
-        super(pTitle, oldSinkScreen, blockPos, isCreative);
+    protected SinkCreativeConfigScreen(SinkMenu menu, Inventory inv, Component originalTitle, boolean isCreative) {
+        super(menu, inv, Component.translatable("gui.timos_sink_mod.admin_config"), isCreative);
+        this.originalTitle = originalTitle;
     }
 
     @Override
-    protected SinkScreenUtil.SinkTabs getTabType() {
-        return SinkScreenUtil.SinkTabs.CREATIVE_CONFIG;
+    protected AbstractSinkScreen.SinkTabs getTabType() {
+        return AbstractSinkScreen.SinkTabs.CREATIVE_CONFIG;
     }
 
     @Override
@@ -41,13 +42,13 @@ public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        renderFluid(guiGraphics, new FluidStack(Fluids.WATER, 1), leftPos + 10, topPos + 7);
+        renderFluid(guiGraphics, new FluidStack(Fluids.WATER, 1), leftPos + 10, topPos + 37);
 
     }
 
     @Override
-    public void tick() {
-        super.tick();
+    protected void containerTick() {
+        super.containerTick();
 
         for(EditBox editBox : editBoxes) {
             editBox.tick();
@@ -55,7 +56,7 @@ public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
     }
 
     private void subInit() {
-        CustomEditBox tempBox = new CustomEditBox(this.font, leftPos + 33, topPos + 10, imageWidth - 43 , 12, Component.translatable("container.repair"), "");
+        CustomEditBox tempBox = new CustomEditBox(this.font, leftPos + 33, topPos + 40, imageWidth - 43 , 12, Component.translatable("container.repair"), "");
         tempBox.setOnLooseFocus(this::onNameChanged);
         tempBox.setValidator(SinkCreativeConfigScreen::isValidFluid);
         this.addRenderableWidget(tempBox);

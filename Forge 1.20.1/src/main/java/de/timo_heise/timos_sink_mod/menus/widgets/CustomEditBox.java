@@ -17,7 +17,6 @@ public class CustomEditBox extends EditBox {
     public CustomEditBox(Font font, int x, int y, int width, int height, Component message, String initialValue) {
         super(font, x, y, width, height, message);
         super.setResponder(this::onValueChange);
-        //EditBox editBox = new EditBox(this.font, leftPos + 10, this.y, imageWidth-20, 12, this.message);
         setTextColor(-1);
         setTextColorUneditable(-1);
         setMaxLength(Integer.MAX_VALUE);

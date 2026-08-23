@@ -120,7 +120,7 @@ public abstract class AbstractSinkScreen extends AbstractContainerScreen<SinkMen
         return coords;
     }
 
-    private static boolean betterIsHovering(int pX, int pY, int pWidth, int pHeight, double pMouseX, double pMouseY) { // the default AbstractContainerScreen isHovering() method is kinda ass
+    public static boolean betterIsHovering(int pX, int pY, int pWidth, int pHeight, double pMouseX, double pMouseY) { // the default AbstractContainerScreen isHovering() method is kinda ass
         return pMouseX >= (double)(pX) && pMouseX < (double)(pX + pWidth) && pMouseY >= (double)(pY) && pMouseY < (double)(pY + pHeight);
     }
 

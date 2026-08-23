@@ -22,9 +22,16 @@ public abstract class AbstractSinkConfigScreen extends AbstractSinkScreen {
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+        if (pKeyCode == 256) {
+            this.minecraft.player.closeContainer();
+        }
+        if(getFocused() instanceof CustomEditBox) {
         if (pKeyCode == GLFW.GLFW_KEY_ENTER) {
-            if(getFocused() instanceof CustomEditBox) {
                 getFocused().setFocused(false);
+                return true;
+            }
+            else {
+                getFocused().keyPressed(pKeyCode, pScanCode, pModifiers);
                 return true;
             }
         }

@@ -56,6 +56,7 @@ public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
         this.addRenderableWidget(tempBox);
         tempFluid = new FluidWidget(leftPos + 10, topPos + 37, font, new FluidStack(Fluids.WATER, 1));
         this.addRenderableOnly(tempFluid);
+        dropPositions.add(tempFluid);
     }
 
     private void onNameChanged(String newFluid) {

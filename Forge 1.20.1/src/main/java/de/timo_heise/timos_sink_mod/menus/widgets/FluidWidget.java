@@ -15,12 +15,11 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-import de.timo_heise.timos_sink_mod.menus.sink.AbstractSinkScreen;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 
-public class FluidWidget implements Renderable {
+public class FluidWidget implements Renderable, IStackDropTarget {
     private final int WIDTH = 18;
     private final int HEIGHT = 18;
     private final int x;
@@ -38,7 +37,7 @@ public class FluidWidget implements Renderable {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderFluid(guiGraphics);
-        if(AbstractSinkScreen.betterIsHovering(x+1, y+1, WIDTH-2, HEIGHT-2, mouseX, mouseY)) {
+        if(ClientUtil.betterIsHovering(x+1, y+1, WIDTH-2, HEIGHT-2, mouseX, mouseY)) {
             highlightSlot(guiGraphics);
             renderTooltip(guiGraphics, mouseX, mouseY);
         }
@@ -85,24 +84,16 @@ public class FluidWidget implements Renderable {
         setFluid(new FluidStack(ClientUtil.getFluidFromID(fluid), 1));
     }
 
+    @Override
+    public ClientUtil.RectPos getPos() {
+        return new ClientUtil.RectPos(x, y, WIDTH, HEIGHT);
+    }
 
-
-//    public void getTooltip(List<Component> tooltip, FluidStack ingredient, TooltipFlag tooltipFlag) {
-//        Fluid fluid = ingredient.getFluid();
-//        if (fluid.isSame(Fluids.EMPTY)) {
-//            return;
-//        }
-//
-//        Component displayName = getDisplayName(ingredient);
-//        tooltip.add(displayName);
-//
-//        if (tooltipFlag.isAdvanced()) {
-//            ResourceLocation resourceLocation = ForgeRegistries.FLUIDS.getKey(fluid);
-//            if (resourceLocation != null) {
-//                MutableComponent advancedId = Component.literal(resourceLocation.toString())
-//                        .withStyle(ChatFormatting.DARK_GRAY);
-//                tooltip.add(advancedId);
-//            }
-//        }
-//    }
+    @Override
+    public boolean acceptStack(FluidStack stack, boolean simulate) {
+        if(!simulate) {
+            setFluid(stack);
+        }
+        return true;
+    }
 }

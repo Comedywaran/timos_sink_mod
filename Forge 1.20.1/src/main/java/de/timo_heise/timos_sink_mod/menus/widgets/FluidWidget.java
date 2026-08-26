@@ -32,7 +32,7 @@ public class FluidWidget implements Renderable, IStackDropTarget {
         this.x = x;
         this.y = y;
         this.font =  font;
-        this.fluid = fluid;
+        this.fluid = fluid.copy();
     }
 
     @Override
@@ -64,11 +64,8 @@ public class FluidWidget implements Renderable, IStackDropTarget {
         ArrayList<Component> tooltip = new ArrayList<Component>();
         tooltip.add(fluid.getDisplayName());
         ResourceLocation resourceLocation = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
-        if (resourceLocation != null) {
-            if(Minecraft.getInstance().options.advancedItemTooltips) {
-                tooltip.add(Component.literal(resourceLocation.toString()).withStyle(ChatFormatting.DARK_GRAY));
-            }
-            tooltip.add(Component.literal(ClientUtil.getModNameForModId(resourceLocation.getNamespace())).withStyle(ChatFormatting.BLUE).withStyle(ChatFormatting.ITALIC));
+        if (resourceLocation != null && Minecraft.getInstance().options.advancedItemTooltips) {
+            tooltip.add(Component.literal(resourceLocation.toString()).withStyle(ChatFormatting.DARK_GRAY));
         }
         guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
     }
@@ -78,11 +75,11 @@ public class FluidWidget implements Renderable, IStackDropTarget {
     }
 
     public void setFluid(FluidStack newFluid) {
-        fluid = newFluid;
+        fluid = newFluid.copy();
     }
 
-    public void setFluid(String fluid) {
-        setFluid(new FluidStack(ClientUtil.getFluidFromID(fluid), 1));
+    public void setFluid(String newFluid) {
+        setFluid(new FluidStack(ClientUtil.getFluidFromID(newFluid), 1));
     }
 
     @Override

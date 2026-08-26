@@ -4,10 +4,12 @@ import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.menus.ClientUtil;
 import de.timo_heise.timos_sink_mod.menus.widgets.CustomEditBox;
 import de.timo_heise.timos_sink_mod.menus.widgets.FluidWidget;
+import de.timo_heise.timos_sink_mod.menus.widgets.ItemWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -54,9 +56,13 @@ public class SinkCreativeConfigScreen extends AbstractSinkConfigScreen {
         tempBox.setOnLooseFocus(this::onNameChanged);
         tempBox.setValidator(ClientUtil::isRealFluid);
         this.addRenderableWidget(tempBox);
-        tempFluid = new FluidWidget(leftPos + 10, topPos + 37, font, new FluidStack(Fluids.WATER, 1));
+        tempFluid = new FluidWidget(leftPos + 10, topPos + 27, font, new FluidStack(Fluids.WATER, 1));
         this.addRenderableOnly(tempFluid);
         dropPositions.add(tempFluid);
+        ItemWidget tempItem = new ItemWidget(leftPos+10, topPos + 50, font, ItemStack.EMPTY);
+        this.addRenderableOnly(tempItem);
+        dropPositions.add(tempItem);
+
     }
 
     private void onNameChanged(String newFluid) {

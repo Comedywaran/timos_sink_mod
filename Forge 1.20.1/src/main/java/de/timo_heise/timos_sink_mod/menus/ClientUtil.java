@@ -2,6 +2,8 @@ package de.timo_heise.timos_sink_mod.menus;
 
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fml.ModContainer;
@@ -40,6 +42,19 @@ public final class ClientUtil {
         if (location == null) {return Fluids.EMPTY;}
         Fluid f = ForgeRegistries.FLUIDS.getValue(location);
         return f == null ? Fluids.EMPTY : f;
+    }
+
+    public static boolean isRealItem(String item) {
+        return getItemFromID(item) != Items.AIR;
+    }
+
+    public static Item getItemFromID(String item) {
+        if (item == null) {return Items.AIR;}
+        item = item.trim().toLowerCase();
+        ResourceLocation location = ResourceLocation.tryParse(item);
+        if (location == null) {return Items.AIR;}
+        Item i = ForgeRegistries.ITEMS.getValue(location);
+        return i == null ? Items.AIR : i;
     }
 
     public static boolean betterIsHovering(int pX, int pY, int pWidth, int pHeight, double pMouseX, double pMouseY) { // the default AbstractContainerScreen isHovering() method is kinda ass

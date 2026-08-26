@@ -7,6 +7,7 @@ import de.timo_heise.timos_sink_mod.menus.ClientUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,7 +23,7 @@ public abstract class AbstractSinkScreen extends AbstractContainerScreen<SinkMen
     protected final ResourceLocation GUI_TEXTURE;
     protected Inventory inv;
     protected Component originalTitle;
-    private ClientUtil.RectPos[] tabCoords;
+    private Rect2i[] tabCoords;
 
     public AbstractSinkScreen(SinkMenu menu, Inventory inv, Component title, boolean isCreative, ResourceLocation GUI_TEXTURE) {
         super(menu, inv, title);
@@ -58,9 +59,9 @@ public abstract class AbstractSinkScreen extends AbstractContainerScreen<SinkMen
 
     private boolean checkButtonPressed(double mouseX, double mouseY) {
         for (SinkTabs tab : SinkTabs.values()) {
-            ClientUtil.RectPos c = tabCoords[tab.ordinal()];
+            Rect2i c = tabCoords[tab.ordinal()];
             if (tab == getTabType() || c == null) {continue;}
-            if(ClientUtil.betterIsHovering(c.x(), c.y(), c.width(), c.height()-4, mouseX, mouseY)) {
+            if(ClientUtil.betterIsHovering(c.getX(), c.getY(), c.getWidth(), c.getHeight()-4, mouseX, mouseY)) {
                 switchScreen(tab);
                 return true;
             }
@@ -86,24 +87,24 @@ public abstract class AbstractSinkScreen extends AbstractContainerScreen<SinkMen
     protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderTooltip(guiGraphics, mouseX, mouseY);
         for(AbstractSinkScreen.SinkTabs tab : AbstractSinkScreen.SinkTabs.values()) {
-            ClientUtil.RectPos c = tabCoords[tab.ordinal()];
+            Rect2i c = tabCoords[tab.ordinal()];
             if(c == null) {continue;}
-            if(ClientUtil.betterIsHovering(c.x(), c.y(), c.width(), c.height()-4, mouseX, mouseY)) {
+            if(ClientUtil.betterIsHovering(c.getX(), c.getY(), c.getWidth(), c.getHeight()-4, mouseX, mouseY)) {
                 guiGraphics.renderTooltip(font, AbstractSinkScreen.components[tab.ordinal()], (int) mouseX, (int) mouseY);
             }
         }
     }
 
-    private static ClientUtil.RectPos[] renderTabButtons(GuiGraphics guiGraphics, boolean isCreative, AbstractSinkScreen.SinkTabs selectedTab, int rightPos, int topPos) {
-        ClientUtil.RectPos[] poss = new ClientUtil.RectPos[AbstractSinkScreen.SinkTabs.values().length];
+    private static Rect2i[] renderTabButtons(GuiGraphics guiGraphics, boolean isCreative, AbstractSinkScreen.SinkTabs selectedTab, int rightPos, int topPos) {
+        Rect2i[] poss = new Rect2i[AbstractSinkScreen.SinkTabs.values().length];
         poss[AbstractSinkScreen.SinkTabs.SINK.ordinal()] = renderTabButton(guiGraphics, (selectedTab == AbstractSinkScreen.SinkTabs.SINK), isCreative ? 2 : 1, ModBlocks.SINK_BLOCK.get(), rightPos, topPos);
         poss[AbstractSinkScreen.SinkTabs.SURVIVAL_CONFIG.ordinal()] = renderTabButton(guiGraphics, (selectedTab == AbstractSinkScreen.SinkTabs.SURVIVAL_CONFIG), isCreative ? 1 : 0, Items.CRAFTING_TABLE, rightPos, topPos);
         if(isCreative) { poss[AbstractSinkScreen.SinkTabs.CREATIVE_CONFIG.ordinal()] = renderTabButton(guiGraphics, (selectedTab == AbstractSinkScreen.SinkTabs.CREATIVE_CONFIG), 0, Items.COMMAND_BLOCK, rightPos, topPos); }
         return poss;
     }
 
-    private static ClientUtil.RectPos renderTabButton(GuiGraphics guiGraphics, boolean isSelected, int index, ItemLike icon, int rightPos, int topPos) {
-        ClientUtil.RectPos pos = new ClientUtil.RectPos(rightPos - (26+1) * (index+1) + 1, topPos - 32 + 4, 26, 32);
+    private static Rect2i renderTabButton(GuiGraphics guiGraphics, boolean isSelected, int index, ItemLike icon, int rightPos, int topPos) {
+        Rect2i pos = new Rect2i(rightPos - (26+1) * (index+1) + 1, topPos - 32 + 4, 26, 32);
         int resourceX = (6-index) * 26; // position of texture in the resource
         int resourceY = 0;
 
@@ -112,11 +113,11 @@ public abstract class AbstractSinkScreen extends AbstractContainerScreen<SinkMen
         com.mojang.blaze3d.systems.RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border. (idk man, I just copied this from vanilla)
         guiGraphics.pose().pushPose();
         if (isSelected) {guiGraphics.pose().translate(0.0F, 0.0F, 1.0F);}
-        guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/tabs.png"), pos.x(), pos.y(), resourceX, resourceY, pos.width(), pos.height());
+        guiGraphics.blit(ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/tabs.png"), pos.getX(), pos.getY(), resourceX, resourceY, pos.getWidth(), pos.getHeight());
         guiGraphics.pose().translate(0.0F, 0.0F, 1.0F);
         if (icon != null) {
             ItemStack itemstack = new ItemStack(icon, 1);
-            guiGraphics.renderItem(itemstack, pos.x()+5, pos.y()+9);
+            guiGraphics.renderItem(itemstack, pos.getX()+5, pos.getY()+9);
         }
         guiGraphics.pose().popPose();
         return pos;

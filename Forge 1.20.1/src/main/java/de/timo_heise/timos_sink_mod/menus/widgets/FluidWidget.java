@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -85,12 +86,14 @@ public class FluidWidget implements Renderable, IStackDropTarget {
     }
 
     @Override
-    public ClientUtil.RectPos getPos() {
-        return new ClientUtil.RectPos(x, y, WIDTH, HEIGHT);
+    public Rect2i getArea() {
+        return new Rect2i(x, y, WIDTH, HEIGHT);
     }
 
     @Override
     public boolean acceptStack(FluidStack stack, boolean simulate) {
+        if(fluid.isFluidStackIdentical(stack)) {return false;}
+
         if(!simulate) {
             setFluid(stack);
         }

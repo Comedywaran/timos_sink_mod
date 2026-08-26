@@ -29,7 +29,7 @@ public abstract class AbstractSinkConfigScreen extends AbstractSinkScreen {
         ItemStack carried = menu.getCarried();
         if(carried != null && !carried.isEmpty()) {
             for (IStackDropTarget dropTarget : dropPositions) {
-                if (ClientUtil.betterIsHovering(dropTarget.getPos(), mouseX, mouseY)) {
+                if (ClientUtil.betterIsHovering(dropTarget.getArea(), mouseX, mouseY)) {
                     if(dropTarget.acceptStack(carried, false)) {return true;}
                 }
             }
@@ -54,5 +54,9 @@ public abstract class AbstractSinkConfigScreen extends AbstractSinkScreen {
             }
         }
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+    }
+
+    public Set<IStackDropTarget> getDropPositions() {
+        return dropPositions;
     }
 }

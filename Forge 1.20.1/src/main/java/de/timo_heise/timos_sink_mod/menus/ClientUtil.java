@@ -1,5 +1,6 @@
 package de.timo_heise.timos_sink_mod.menus;
 
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -14,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ClientUtil {
-    public record RectPos(int x, int y, int width, int height) {}
     private static final Map<String, String> modNameCache = new HashMap<>();
 
     public static String getModNameForModId(String modId) {
@@ -46,7 +46,7 @@ public final class ClientUtil {
         return pMouseX >= (double)(pX) && pMouseX < (double)(pX + pWidth) && pMouseY >= (double)(pY) && pMouseY < (double)(pY + pHeight);
     }
 
-    public static boolean betterIsHovering(RectPos pos, double pMouseX, double pMouseY) {
-        return betterIsHovering(pos.x,  pos.y, pos.width, pos.height, pMouseX, pMouseY);
+    public static boolean betterIsHovering(Rect2i pos, double pMouseX, double pMouseY) {
+        return betterIsHovering(pos.getX(),  pos.getY(), pos.getWidth(), pos.getHeight(), pMouseX, pMouseY);
     }
 }

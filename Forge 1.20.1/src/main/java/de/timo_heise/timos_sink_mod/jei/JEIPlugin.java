@@ -14,4 +14,10 @@ public class JEIPlugin implements IModPlugin {
     public ResourceLocation getPluginUid() {
         return ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "jei_plugin");
     }
+
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        IModPlugin.super.registerGuiHandlers(registration);
+        registration.addGhostIngredientHandler(AbstractSinkConfigScreen.class, new SinkConfigScreenGhostIngredientHandler());
+    }
 }

@@ -6,7 +6,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -20,11 +19,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 
-public class FluidWidget implements Renderable, IStackDropTarget {
+public class FluidWidget implements IRenderableWithSeperateTooltip, IStackDropTarget {
     private final int WIDTH = 18;
     private final int HEIGHT = 18;
     private final int x;
-    private final int y;
+    private int y;
     private final Font font;
     private FluidStack fluid;
 
@@ -37,11 +36,28 @@ public class FluidWidget implements Renderable, IStackDropTarget {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        renderWithoutTooltip(guiGraphics, mouseX, mouseY, partialTick);
+        renderTooltip(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    public void renderWithoutTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderFluid(guiGraphics);
         if(ClientUtil.betterIsHovering(x+1, y+1, WIDTH-2, HEIGHT-2, mouseX, mouseY)) {
             highlightSlot(guiGraphics);
-            renderTooltip(guiGraphics, mouseX, mouseY);
         }
+    }
+
+    @Override
+    public void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY,  float partialTick) {
+        if(!ClientUtil.betterIsHovering(x+1, y+1, WIDTH-2, HEIGHT-2, mouseX, mouseY)) return;
+        if(fluid.getFluid() == Fluids.EMPTY) return;
+        ArrayList<Component> tooltip = new ArrayList<Component>();
+        tooltip.add(fluid.getDisplayName());
+        ResourceLocation resourceLocation = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
+        if (resourceLocation != null && Minecraft.getInstance().options.advancedItemTooltips) {
+            tooltip.add(Component.literal(resourceLocation.toString()).withStyle(ChatFormatting.DARK_GRAY));
+        }
+        guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
     }
 
     private void renderFluid(GuiGraphics guiGraphics) {
@@ -57,17 +73,6 @@ public class FluidWidget implements Renderable, IStackDropTarget {
                 (tint >> 8 & 0xFF) / 255.0F,
                 (tint & 0xFF) / 255.0F,
                 (tint >> 24 & 0xFF) / 255.0F);
-    }
-
-    private void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        if(fluid.getFluid() == Fluids.EMPTY) return;
-        ArrayList<Component> tooltip = new ArrayList<Component>();
-        tooltip.add(fluid.getDisplayName());
-        ResourceLocation resourceLocation = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
-        if (resourceLocation != null && Minecraft.getInstance().options.advancedItemTooltips) {
-            tooltip.add(Component.literal(resourceLocation.toString()).withStyle(ChatFormatting.DARK_GRAY));
-        }
-        guiGraphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
     }
 
     private void highlightSlot(GuiGraphics guiGraphics) {
@@ -95,5 +100,9 @@ public class FluidWidget implements Renderable, IStackDropTarget {
             setFluid(stack);
         }
         return true;
+    }
+
+    public void setY(int newY) {
+        y = newY;
     }
 }

@@ -1,6 +1,5 @@
 package de.timo_heise.timos_sink_mod.menus.widgets;
 
-import com.mojang.logging.LogUtils;
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.menus.ClientUtil;
 import net.minecraft.client.Minecraft;
@@ -33,7 +32,6 @@ public class ItemWidget implements Renderable, IStackDropTarget {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        LogUtils.getLogger().debug(this +" "+item.getDisplayName().getString());
         renderItem(guiGraphics);
         if(ClientUtil.betterIsHovering(x+1, y+1, WIDTH-2, HEIGHT-2, mouseX, mouseY)) {
             highlightSlot(guiGraphics);
@@ -58,7 +56,6 @@ public class ItemWidget implements Renderable, IStackDropTarget {
     }
 
     public void setItem(ItemStack newItem) {
-        LogUtils.getLogger().debug("Setting item to {}", newItem.getDisplayName().getString());
         item = newItem.copy();
     }
 
@@ -79,9 +76,5 @@ public class ItemWidget implements Renderable, IStackDropTarget {
             setItem(stack);
         }
         return true;
-    }
-
-    private static List<Component> getTooltipFromItem(ItemStack itemstack, List<String> tooltip) {
-        return itemstack.getTooltipLines(Minecraft.getInstance().player, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
     }
 }

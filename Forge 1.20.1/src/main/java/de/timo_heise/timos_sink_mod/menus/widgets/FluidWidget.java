@@ -2,6 +2,7 @@ package de.timo_heise.timos_sink_mod.menus.widgets;
 
 import de.timo_heise.timos_sink_mod.TimosSinkMod;
 import de.timo_heise.timos_sink_mod.menus.ClientUtil;
+import de.timo_heise.timos_sink_mod.menus.widgets.ScrollPanel.IRenderableWithSeparateTooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,10 +20,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 
-public class FluidWidget implements IRenderableWithSeperateTooltip, IStackDropTarget {
+public class FluidWidget implements IRenderableWithSeparateTooltip, IStackDropTarget {
     private final int WIDTH = 18;
     private final int HEIGHT = 18;
-    private final int x;
+    private int x;
     private int y;
     private final Font font;
     private FluidStack fluid;
@@ -102,7 +103,23 @@ public class FluidWidget implements IRenderableWithSeperateTooltip, IStackDropTa
         return true;
     }
 
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+    public void setX(int newX) {
+        x = newX;
+    }
     public void setY(int newY) {
         y = newY;
     }
+    public int getWidth() {
+        return WIDTH;
+    }
+    public int getHeight() {
+        return HEIGHT;
+    }
+
 }

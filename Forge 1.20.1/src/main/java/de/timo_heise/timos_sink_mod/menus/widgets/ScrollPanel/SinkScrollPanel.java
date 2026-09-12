@@ -19,7 +19,7 @@ import java.util.*;
 
 /**
  * code inspired by {@link net.minecraftforge.client.gui.ModListScreen.InfoPanel}
- * <br>TODO: widgets, mouse hovering outside of panel, getContentHeight(), getScrollAmount()?, comments
+ * <br>TODO: widgets, getContentHeight(), getScrollAmount()?, comments
  */
 public class SinkScrollPanel extends ScrollPanel {
     private final Set<AbstractWidget> widgets = new LinkedHashSet<>();
@@ -100,6 +100,7 @@ public class SinkScrollPanel extends ScrollPanel {
     @Override
     protected void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY)
     {
+        boolean mouseInPanel = mouseY >= (double) top && mouseY < (double) bottom; // only checks y-coordinate, since x doesn't change
         yOffset = relativeY-this.top;
         float partialTick = Minecraft.getInstance().getFrameTime();
         guiGraphics.pose().pushPose();
@@ -107,10 +108,12 @@ public class SinkScrollPanel extends ScrollPanel {
 
         for(Renderable renderable : renderables) {
             if(renderable instanceof IRenderableWithSeparateTooltip) {
-                ((IRenderableWithSeparateTooltip) renderable).renderWithoutTooltip(guiGraphics, mouseX, mouseY-yOffset, partialTick);
+                // top-100-getContentHeight() is just that the renderable doesn't think the player is hovering over it, may break some renderable
+                ((IRenderableWithSeparateTooltip) renderable).renderWithoutTooltip(guiGraphics, mouseX, mouseInPanel ? mouseY-yOffset : top-100-getContentHeight(), partialTick);
             }
             else {
-                renderable.render(guiGraphics, mouseX, mouseY-yOffset, partialTick);
+                // see above
+                renderable.render(guiGraphics, mouseX, mouseInPanel ? mouseY-yOffset : top-100-getContentHeight(), partialTick);
             }
         }
 

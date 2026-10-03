@@ -9,6 +9,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 public class SinkSurvivalConfigScreen extends AbstractSinkConfigScreen {
+    SinkScrollPanel tempSinkScrollPanel;
 
     protected SinkSurvivalConfigScreen(SinkMenu menu, Inventory inv, Component originalTitle, boolean isCreative) {
         super(menu, inv, Component.translatable("gui.timos_sink_mod.config"), isCreative);
@@ -28,8 +29,14 @@ public class SinkSurvivalConfigScreen extends AbstractSinkConfigScreen {
     @Override
     protected void init() {
         super.init();
-        SinkScrollPanel tempSinkScrollPanel = new SinkScrollPanel(minecraft, leftPos+7, topPos+15, 162, 55);
+        tempSinkScrollPanel = new SinkScrollPanel(minecraft, leftPos+7, topPos+15, 162, 55);
         tempSinkScrollPanel.addRenderableOnly(new FluidWidget(leftPos+10, topPos+20, font, new FluidStack(Fluids.WATER, 1)), 18);
         addRenderableWidget(tempSinkScrollPanel);
+    }
+
+    @Override
+    public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+        if(tempSinkScrollPanel.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)) return true;
+        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 }

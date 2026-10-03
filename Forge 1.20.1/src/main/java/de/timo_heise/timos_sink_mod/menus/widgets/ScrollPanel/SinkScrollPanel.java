@@ -17,9 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Supplier;
+
 /**
  * code inspired by {@link net.minecraftforge.client.gui.ModListScreen.InfoPanel}
- * <br>TODO: widgets, clicking on scroll bar, fancy scroll bar?, getScrollAmount()?
+ * <br>TODO: widgets, fancy scroll bar?, getScrollAmount()?
  */
 public class SinkScrollPanel extends ScrollPanel {
     protected final Set<AbstractWidget> widgets = new LinkedHashSet<>();
@@ -58,13 +59,6 @@ public class SinkScrollPanel extends ScrollPanel {
         return Math.max(contentHeight, this.height);
     }
 
-//    @Override
-//    protected int getScrollAmount()
-//    {
-//        return font.lineHeight * 3;
-//    }
-
-
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -84,7 +78,7 @@ public class SinkScrollPanel extends ScrollPanel {
     }
 
     /**
-     * drawes the frame around the panel
+     * draws the frame around the panel
      */
     protected void drawFrame(GuiGraphics guiGraphics) {
 

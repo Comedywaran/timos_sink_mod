@@ -29,7 +29,7 @@ public class SinkSurvivalConfigScreen extends AbstractSinkConfigScreen {
     protected void init() {
         super.init();
         SinkScrollPanel tempSinkScrollPanel = new SinkScrollPanel(minecraft, leftPos+7, topPos+15, 162, 55);
-        tempSinkScrollPanel.addRenderableOnly(new FluidWidget(leftPos+10, topPos+17, font, new FluidStack(Fluids.WATER, 1)));
+        tempSinkScrollPanel.addRenderableOnly(new FluidWidget(leftPos+10, topPos+20, font, new FluidStack(Fluids.WATER, 1)), 18);
         addRenderableWidget(tempSinkScrollPanel);
     }
 }

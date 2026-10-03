@@ -16,34 +16,46 @@ import net.minecraftforge.client.gui.widget.ScrollPanel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-
+import java.util.function.Supplier;
 /**
  * code inspired by {@link net.minecraftforge.client.gui.ModListScreen.InfoPanel}
- * <br>TODO: widgets, getContentHeight(), getScrollAmount()?, comments
+ * <br>TODO: widgets, clicking on scroll bar, fancy scroll bar?, getScrollAmount()?
  */
 public class SinkScrollPanel extends ScrollPanel {
-    private final Set<AbstractWidget> widgets = new LinkedHashSet<>();
-    private final Set<Renderable> renderables = new LinkedHashSet<>();
-    private int yOffset;
-    private static final int BORDER = 4;
-    private static final int SPACEBETWEENPANELANDBAR = 3;
-    private static final int BARWIDTH = 6;
-    private static final ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/sink.png");
+    protected final Set<AbstractWidget> widgets = new LinkedHashSet<>();
+    protected final Map<Renderable, Supplier<Integer>> renderables = new LinkedHashMap<>();
+    protected int yOffset; // how much the panel is scrolled down (so 0 if not scrolled)
+    protected static final int EXTRAYSPACE = 4; // adds some space below the last renderable for aesthetic reasons
+    protected static final int SPACEBETWEENPANELANDBAR = 3; // space between the panel and the scroll bar on the right for texture
+    protected static final int BARWIDTH = 6; // width of the scroll bar on the right
+    protected static final ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(TimosSinkMod.MOD_ID, "textures/gui/sink/sink.png");
+    protected boolean scrollable; //TODO: add grayed out scroll bar
 
+    /**
+     * note that the actual panel will be 1 pixel smaller in every direction since this pixel is reserved for a border around the panel; also leave space to the right since the scrollbar is there
+     */
     public SinkScrollPanel(Minecraft mc, int x, int y, int width, int height) {
         this(mc, x, y, width, height, getBGColor(), 0xFF8B8B8B, 0xFF555555, 0xFFC6C6C6);
     }
 
-    private SinkScrollPanel(Minecraft mc, int x, int y, int width, int height, int bgColor, int barBgColor, int barColor, int barBorderColor)
+    /**
+     * note that the actual panel will be 1 pixel smaller in every direction since this pixel is reserved for a border around the panel; also leave space to the right since the scrollbar is there
+     */
+    protected SinkScrollPanel(Minecraft mc, int x, int y, int width, int height, int bgColor, int barBgColor, int barColor, int barBorderColor)
     {
-        super(mc, width-2, height-2, y+1, x+1, BORDER, BARWIDTH, bgColor, bgColor, barBgColor, barColor, barBorderColor);
+        super(mc, width-2, height-2, y+1, x+1, 0, BARWIDTH, bgColor, bgColor, barBgColor, barColor, barBorderColor);
     }
 
     @Override
     public int getContentHeight()
     {
-        return 100;
-        //return Math.max(contentHeight, this.bottom - this.top - 8);
+        int contentHeight = 0;
+        for(Supplier<Integer> supplier: renderables.values()) {
+            contentHeight = Math.max(contentHeight, supplier.get());
+        }
+        contentHeight += EXTRAYSPACE;
+        scrollable = contentHeight > this.height;
+        return Math.max(contentHeight, this.height);
     }
 
 //    @Override
@@ -57,19 +69,23 @@ public class SinkScrollPanel extends ScrollPanel {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
+        drawFrame(guiGraphics);
+
         if (ClientUtil.betterIsHovering(left, top, width-SPACEBETWEENPANELANDBAR-BARWIDTH, height, mouseX, mouseY)) {
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0, yOffset, 0);
-            for(Renderable renderable : renderables) {
+            for(Renderable renderable : renderables.keySet()) {
                 if(renderable instanceof IRenderableWithSeparateTooltip) {
                     ((IRenderableWithSeparateTooltip) renderable).renderTooltip(guiGraphics, mouseX, mouseY- yOffset, partialTick);
                 }
             }
             guiGraphics.pose().popPose();
         }
-        drawFrame(guiGraphics);
     }
 
+    /**
+     * drawes the frame around the panel
+     */
     protected void drawFrame(GuiGraphics guiGraphics) {
 
         int panelRight = right-SPACEBETWEENPANELANDBAR-BARWIDTH;
@@ -106,7 +122,7 @@ public class SinkScrollPanel extends ScrollPanel {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, yOffset, 0);
 
-        for(Renderable renderable : renderables) {
+        for(Renderable renderable : renderables.keySet()) {
             if(renderable instanceof IRenderableWithSeparateTooltip) {
                 // top-100-getContentHeight() is just that the renderable doesn't think the player is hovering over it, may break some renderable
                 ((IRenderableWithSeparateTooltip) renderable).renderWithoutTooltip(guiGraphics, mouseX, mouseInPanel ? mouseY-yOffset : top-100-getContentHeight(), partialTick);
@@ -128,22 +144,67 @@ public class SinkScrollPanel extends ScrollPanel {
     @Override
     public void updateNarration(NarrationElementOutput pNarrationElementOutput) {}
 
+    /**
+     * adds an {@link AbstractWidget} to be accessible (but not rendered) inside the {@link SinkScrollPanel}
+     * @param widget
+     */
     public void addWidget(AbstractWidget widget) {
         widgets.add(widget);
     }
 
+    /**
+     * adds an {@link AbstractWidget} to be rendered and accessible inside the {@link SinkScrollPanel}.
+     * @param widget the widget to be added; uses {@code widget.getY() + widget.getHeight()} for the bottom coordinate
+     */
     public void addRenderableWidget(AbstractWidget widget) {
-        widgets.add(widget);
-        renderables.add(widget);
+        addWidget(widget);
+        addRenderableOnly(widget);
     }
 
+    /**
+     * adds an {@link AbstractWidget} to be rendered and accessible inside the {@link SinkScrollPanel}.
+     * @param widget the widget to be added
+     * @param bottom the bottom coordinate of the renderable, used to calculate the panel's scrollable range; {@code -1} if this renderable should be ignored
+     */
+    public void addRenderableWidget(AbstractWidget widget, int bottom) {
+        addWidget(widget);
+        addRenderableOnly(widget, bottom);
+    }
+
+    /**
+     * adds an {@link AbstractWidget} to be rendered and accessible inside the {@link SinkScrollPanel}.
+     * @param widget the widget to be added
+     * @param bottomGetter a supplier that returns the bottom coordinate of the widget, used to calculate the panel's scrollable range; {@code -1} if this widget should be ignored
+     */
+    public void addRenderableWidget(AbstractWidget widget, Supplier<Integer> bottomGetter) {
+        addWidget(widget);
+        addRenderableOnly(widget, bottomGetter);
+    }
+
+    /**
+     * adds a {@link Renderable} to be rendered inside the {@link SinkScrollPanel}.
+     * @param widget the renderable to be rendered; uses {@code widget.getY() + widget.getHeight()} for the bottom coordinate
+     */
     public void addRenderableOnly(AbstractWidget widget) {
-        renderables.add(widget);
+        renderables.put(widget, () -> widget.getY() + widget.getHeight());
     }
 
-    public void addRenderableOnly(Renderable renderable) {
-        renderables.add(renderable);
-        //contentHeight = Math.max(contentHeight, bottomPos);
+    /**
+     * adds a {@link Renderable} to be rendered inside the {@link SinkScrollPanel}.
+     * @param renderable the renderable to be rendered
+     * @param bottom the bottom coordinate of the renderable, used to calculate the panel's scrollable range; {@code -1} if this renderable should be ignored
+     */
+    public void addRenderableOnly(Renderable renderable, int bottom) {
+        renderables.put(renderable, () -> bottom);
+    }
+
+    /**
+     * adds a {@link Renderable} to be rendered inside the {@link SinkScrollPanel}.
+     * @param renderable the renderable to be rendered
+     * @param bottomGetter a supplier that returns the bottom coordinate of the renderable, used to calculate the panel's scrollable range; {@code -1} if this renderable should be ignored
+     */
+    public void addRenderableOnly(Renderable renderable, Supplier<Integer> bottomGetter) {
+        renderables.put(renderable, bottomGetter);
     }
 
     private static int getBGColor() {
